@@ -27,7 +27,8 @@ requirements.txt       Python 依賴
 ```bash
 git clone git@github.com:Mason1217/tkr-wound-care-system.git
 cd tkr-wound-care-system
-git submodule update --init --recursive
+git submodule init
+git submodule update
 ```
 
 也可以用 `git clone --recurse-submodules git@github.com:Mason1217/tkr-wound-care-system.git` 一步完成。
@@ -35,7 +36,8 @@ git submodule update --init --recursive
 日後 `git pull` 更新主專案後，submodule 不會自動跟著更新，需再跑一次：
 
 ```bash
-git submodule update --init --recursive
+git submodule init
+git submodule update
 ```
 
 安裝依賴：
@@ -44,6 +46,15 @@ git submodule update --init --recursive
 pip install -r requirements.txt
 pip install -e external/TKR_Segmentation   # 提供 tkr_inference 套件，run_inference.py / gather_models.py 等會用到
 ```
+
+`external/TKR_Segmentation` 的傷口分割模型權重檔不包含在版本控制中，需手動下載並放到指定位置：
+
+1. 下載模型檔：[tkr_seg_validity_gate_b3_256.pt](https://drive.google.com/file/d/1WjWuJiU1MGoVjPzVWcxLxOTqIvIrQc-j/view?usp=sharing)
+2. 放到以下路徑（檔名需完全一致）：
+```
+external/TKR_Segmentation/tkr_inference/weights/tkr_seg_validity_gate_b3_256.pt
+```
+3. 放好後可到 `external/TKR_Segmentation` 執行 `./run.sh verify` 驗證。
 
 ## 環境變數
 
