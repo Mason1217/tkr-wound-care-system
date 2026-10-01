@@ -1,0 +1,38 @@
+# Deep learning
+torch==2.3.1
+torchvision==0.18.1
+torchaudio
+grad-cam==1.5.5
+scikit-learn
+
+# Hugging face packages
+transformers==4.56.1
+peft==0.17.1
+timm
+
+# Data Handling & ML
+pandas==2.3.1
+numpy==2.2.6
+scikit-learn==1.7.1
+seaborn==0.13.2
+
+# Image Processing
+Pillow==11.3.0
+opencv-python==4.12.0.88
+pillow-heif==0.15.0
+ultralytics
+
+# Development & Visualization
+matplotlib==3.10.1
+jupyterlab==4.4.5
+tqdm
+openpyxl==3.1.5
+
+# Config
+omegaconf
+python-dotenv
+
+# API
+fastapi
+uvicorn
+python-multipart

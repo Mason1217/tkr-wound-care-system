@@ -1,0 +1,108 @@
+# ==========================================
+#  TKR Base Configuration
+# ==========================================
+
+debug:
+  overfit_single_batch: false
+  see_preprocessed_img: false
+
+# --- 1. Basic infomation about experiment ---
+project_name: "TKR_Wound_Analysis"
+exp_name: "default_exp"
+seed: 42
+device: "auto"
+output_dir: "./results"
+
+# --- 2. Data ---
+data:
+  metadata_dir: "data/TKR/structured_data"
+  image_dir: "data/TKR/raw_images"
+  basic_transforms: true
+  image_size: [224, 224]
+  batch_size: 32
+  num_workers: 8
+  split:
+    val_size: 0.15
+    test_size: 0.15
+  split_version: v1
+  
+  image_id_map_mode: original # original / cropped / masked / segmentation
+  use_oversampling: false
+  image_id_map_file:
+    original    : "data/TKR/processed/image_id_map.json"
+    cropped     : "data/TKR/processed/cropped_image_id_map.json"
+    masked      : "data/TKR/processed/masked_image_id_map.json"
+    segmentation: "data/TKR/processed/segmentation_image_id_map.json"
+
+  # Image transforms
+  image_transforms:
+    normalize:
+      mean: [0.485, 0.456, 0.406]
+      std:  [0.229, 0.224, 0.225]
+
+  # Features & labels
+  features:
+    numerical: ["身高(m)", "體重(KG)", "BMI", "術後天數", "傷口大小"]
+    categorical: ["性別"]
+  labels:
+    target_col: "建議"
+    num_classes: 5
+    names:
+      - "正常，冰敷即可"      # -> 0
+      - "低風險，加強冰敷"    # -> 1
+      - "中度風險，觀察3天"   # -> 2
+      - "高風險，立即就醫"    # -> 3
+      - "無法辨識"           # -> 4
+    
+
+# --- 3. Model ---
+model:
+  name: "ViTB32"
+  type: "image_only"
+  peft: true
+  params:
+    num_classes: 5
+    classifier_hidden_dim: 128
+    dropout_rate: 0.3
+    backbone_dropout: 0.2
+    use_lora: false
+    lora_cfg:
+      r: 8
+      alpha: 16
+      target_modules: ["query", "value"]
+
+# --- 4. Loss ---
+loss:
+  name: "CrossEntropyLoss"
+
+# --- 5. Optimizer ---
+optimizer:
+  name: "AdamW"
+  params:
+    lr: 0.0001
+
+# --- 6. Scheduler ---
+scheduler:
+  name: "CosineAnnealingLR"
+  params:
+    T_max: 100
+    eta_min: 1.0e-7
+
+# --- 7. Callbacks ---
+callbacks:
+  early_stopping:
+    enable: false
+    monitor: "val_macro_recall"
+    mode: "max"
+    patience: 10
+  
+  checkpoint:
+    monitor: "val_macro_recall"
+    mode: "max"
+
+# --- 8. Mixup (Data Augmentation) ---
+mixup:
+  enable: false
+  alpha: 0.4           # Beta distribution parameter
+  prob: 0.5            # 發生機率
+  num_classes: 5       # 需要知道類別數來做 One-hot encoding

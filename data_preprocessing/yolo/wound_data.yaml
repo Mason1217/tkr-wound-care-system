@@ -1,0 +1,6 @@
+path: /Users/mason/project/Wound_Detection/yolo/wound_dataset
+train: images/train
+val: images/val
+nc: 1
+names:
+- wound

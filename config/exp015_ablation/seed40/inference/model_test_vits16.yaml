@@ -1,0 +1,89 @@
+device: auto
+test_csv_path:
+- data/TKR/splits/seed_40_fold_0/test.csv
+val_csv_path:
+- data/TKR/splits/seed_40_fold_0/val.csv
+- data/TKR/splits/seed_40_fold_1/val.csv
+- data/TKR/splits/seed_40_fold_2/val.csv
+- data/TKR/splits/seed_40_fold_3/val.csv
+- data/TKR/splits/seed_40_fold_4/val.csv
+result_dir:
+- results/exp015_ablation/exp015_model_test_vits16
+multimodal_model_dir: results/exp015_ablation/exp015_model_test_vits16/inference_asset/models/multimodal
+image_only_model_dir: null
+yolo_model_path: results/exp015_ablation/exp015_model_test_vits16/inference_asset/yolo/v1.pt
+tabular_processor_dir: results/exp015_ablation/exp015_model_test_vits16/inference_asset/processors
+multimodal_model:
+  name: ViTS16FusionClassifier
+  type: multimodal
+  params:
+    backbone_name: WinKawaks/vit-small-patch16-224
+    num_classes: 2
+    tabular_dim: 3
+    tabular_hidden_dim: 32
+    mlp_dim: 256
+    use_lora: true
+    lora_cfg:
+      r: 64
+      alpha: 128
+      dropout: 0.1
+      target_modules:
+      - query
+      - key
+      - value
+      - dense
+image_only_model:
+  name: DINOv2Classifier
+  type: image_only
+  params:
+    backbone_name: facebook/dinov2-small
+    num_classes: 2
+    use_mlp: true
+    mlp_dim: 256
+    use_lora: true
+    lora_cfg:
+      r: 64
+      alpha: 128
+      dropout: 0.1
+      target_modules:
+      - query
+      - key
+      - value
+      - dense
+image_transforms:
+  image_size:
+  - 224
+  - 224
+  padding_mode: constant
+calibrate_parameters:
+  multimodal:
+    temperatures:
+    - 1.2223
+    - 0.7514
+    - 0.9122
+    - 1.0072
+    - 1.7594
+    threshold: 0.5
+  image_only:
+    temperatures: null
+    threshold: null
+analyze_model:
+  path: results/exp015_ablation/exp015_model_test_vits16/inference_asset/models/multimodal/run1_split_versionseed_40_fold_0_stage2_finetune_best_model.pth
+  name: ViTS16FusionClassifier
+  type: multimodal
+  params:
+    backbone_name: winkawaks/vit-small-patch16-224-in21k
+    num_classes: 2
+    tabular_dim: 3
+    tabular_hidden_dim: 32
+    mlp_dim: 256
+    use_lora: true
+    lora_cfg:
+      r: 64
+      alpha: 128
+      dropout: 0.1
+      target_modules:
+      - query
+      - key
+      - value
+      - dense

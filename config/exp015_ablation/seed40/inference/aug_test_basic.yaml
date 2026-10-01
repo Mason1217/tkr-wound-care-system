@@ -1,0 +1,84 @@
+device: auto
+test_csv_path:
+- data/TKR/splits/seed_40_fold_0/test.csv
+val_csv_path:
+- data/TKR/splits/seed_40_fold_0/val.csv
+- data/TKR/splits/seed_40_fold_1/val.csv
+- data/TKR/splits/seed_40_fold_2/val.csv
+- data/TKR/splits/seed_40_fold_3/val.csv
+- data/TKR/splits/seed_40_fold_4/val.csv
+result_dir:
+- results/exp015_ablation/exp015_aug_test_basic
+multimodal_model_dir: results/exp015_ablation/exp015_aug_test_basic/inference_asset/models/multimodal
+image_only_model_dir: 
+yolo_model_path: results/exp015_ablation/exp015_aug_test_basic/inference_asset/yolo/v1.pt
+tabular_processor_dir: results/exp015_ablation/exp015_aug_test_basic/inference_asset/processors
+multimodal_model:
+  name: DINOv2FusionClassifier
+  type: multimodal
+  params:
+    backbone_name: facebook/dinov2-small
+    num_classes: 2
+    tabular_dim: 3
+    tabular_hidden_dim: 32
+    mlp_dim: 256
+    use_lora: true
+    lora_cfg:
+      r: 64
+      alpha: 128
+      dropout: 0.1
+      target_modules:
+      - query
+      - key
+      - value
+      - dense
+image_only_model:
+  name: DINOv2Classifier
+  type: image_only
+  params:
+    backbone_name: facebook/dinov2-small
+    num_classes: 2
+    use_mlp: true
+    mlp_dim: 256
+    use_lora: true
+    lora_cfg:
+      r: 64
+      alpha: 128
+      dropout: 0.1
+      target_modules:
+      - query
+      - key
+      - value
+      - dense
+image_transforms:
+  image_size:
+  - 224
+  - 224
+  padding_mode: constant
+calibrate_parameters:
+  multimodal:
+    temperatures:
+    threshold: 0.5
+  image_only:
+    temperatures:
+    threshold: 0.5
+analyze_model:
+  path: results/exp015_ablation/exp015_aug_test_basic/inference_asset/models/multimodal/run1_split_versionseed_40_fold_0_stage2_finetune_best_model.pth
+  name: DINOv2FusionClassifier
+  type: multimodal
+  params:
+    backbone_name: facebook/dinov2-small
+    num_classes: 2
+    tabular_dim: 3
+    tabular_hidden_dim: 32
+    mlp_dim: 256
+    use_lora: true
+    lora_cfg:
+      r: 64
+      alpha: 128
+      dropout: 0.1
+      target_modules:
+      - query
+      - key
+      - value
+      - dense
